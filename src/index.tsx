@@ -1,25 +1,22 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import App from "./App";
+import { RecoilRoot } from "recoil";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider } from "styled-components";
+import { darkTheme } from "./theme";
 
-const root = ReactDOM.createRoot(
-	document.getElementById("root") as HTMLElement
-);
-const darkTheme = {
-	textColor: "whitesmoke",
-	backgroundColor: "#111",
-};
-const lightTheme = {
-	textColor: "#111",
-	backgroundColor: "whitesmoke",
-};
-let darkMode = true;
+const queryClient = new QueryClient();
 
-root.render(
+ReactDOM.render(
 	<React.StrictMode>
-		<ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-			<App />
-		</ThemeProvider>
-	</React.StrictMode>
+		<RecoilRoot>
+			<QueryClientProvider client={queryClient}>
+				<ThemeProvider theme={darkTheme}>
+					<App />
+				</ThemeProvider>
+			</QueryClientProvider>
+		</RecoilRoot>
+	</React.StrictMode>,
+	document.getElementById("root")
 );

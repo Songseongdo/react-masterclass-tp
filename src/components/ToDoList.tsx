@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
-import { toDoState } from "../state/atom";
+import { categoryState, toDoSelector } from "../state/atom";
 import { CreateToDo } from "./CreateToDo";
 import { ToDo } from "./ToDo";
+import React from "react";
 
 const Container = styled.div`
 	width: 100%;
@@ -12,29 +13,41 @@ const Container = styled.div`
 	gap: 20px;
 	align-items: center;
 	padding: 30px;
+
+	hr {
+		width: 100%;
+	}
 `;
 const Header = styled.div`
 	color: ${(props) => props.theme.textColor};
 	font-size: 30px;
 `;
-const DotoContinaer = styled.ul``;
+const ToDoContainer = styled.ul``;
+const Title = styled.h1`
+	font-size: 25px;
+`;
+
+const TitleArr = ["To DO", "Doing", "Done"];
 
 function ToDoList() {
-	const toDos = useRecoilValue(toDoState);
+	const toDos = useRecoilValue(toDoSelector);
+	const category = useRecoilValue(categoryState);
 
 	return (
 		<Container>
 			<Header>TO DO LIST</Header>
-			<hr />
+
 			<CreateToDo />
+			<hr />
 
-			<DotoContinaer>
-				{toDos.map((toDo) => (
-					<ToDo key={toDo.id} {...toDo} />
+			<Title>{TitleArr[category]}</Title>
+			<ToDoContainer>
+				{toDos.map((toDo, index) => (
+					<React.Fragment key={`${toDo.id}_${index}_${toDo.text}`}>
+						<ToDo {...toDo} />
+					</React.Fragment>
 				))}
-			</DotoContinaer>
-
-			<div></div>
+			</ToDoContainer>
 		</Container>
 	);
 }

@@ -1,3 +1,4 @@
+import { Categories } from "../const";
 export interface IForm {
 	toDo: string;
 }
@@ -5,5 +6,10 @@ export interface IForm {
 export interface IToDo {
 	text: string;
 	id: number;
-	category: "TO_DO" | "DOING" | "DONE";
+	category: Categories;
+}
+
+export interface ITrelloToDo {
+	text: string;
+	id: number;
 }

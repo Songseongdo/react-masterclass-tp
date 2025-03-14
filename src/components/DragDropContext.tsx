@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef, useState } from "react";
+import { FunctionComponent, useRef } from "react";
 import { DragDropContext, Draggable, DraggingStyle, Droppable, DropResult, NotDraggingStyle } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
@@ -86,26 +86,13 @@ let TestArr = [
 const DragDropCont: FunctionComponent<IDraggableCardProps> = () => {
 	const [trelloToDos, setTrelloToDos] = useRecoilState(trelloState);
 	const draggableRefs = useRef<Record<string, HTMLDivElement | null>>({});
-	const activeDraggableId = useRef<string | null>(null);
-	const [position, setPosition] = useState<{ x: number; y: number }>({
-		x: 0,
-		y: 0,
-	});
 
-	const onDragStart = (start: { draggableId: string }) => {
-		activeDraggableId.current = start.draggableId;
-	};
-	const onDragUpdate = () => {
-		console.log("update");
-	};
 	const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
 		if (!destination) {
 			console.log(draggableId, destination, source);
 
 			return;
 		}
-
-		activeDraggableId.current = null;
 
 		if (source.droppableId === "TEST" || destination.droppableId === "TEST") {
 			[TestArr[source.index], TestArr[destination.index]] = [TestArr[destination.index], TestArr[source.index]];
@@ -162,22 +149,8 @@ const DragDropCont: FunctionComponent<IDraggableCardProps> = () => {
 		return style;
 	}
 
-	useEffect(() => {
-		const handleMouseMove = (event: MouseEvent) => {
-			if (activeDraggableId.current) {
-				setPosition({ x: event.clientX, y: 0 });
-			}
-		};
-
-		window.addEventListener("mousemove", handleMouseMove);
-
-		return () => {
-			window.removeEventListener("mousemove", handleMouseMove);
-		};
-	}, []);
-
 	return (
-		<DragDropContext onDragStart={onDragStart} onDragUpdate={onDragUpdate} onDragEnd={onDragEnd}>
+		<DragDropContext onDragEnd={onDragEnd}>
 			<Trash>
 				<Title>Trash</Title>
 				<Droppable droppableId="Trash">
@@ -188,12 +161,6 @@ const DragDropCont: FunctionComponent<IDraggableCardProps> = () => {
 					)}
 				</Droppable>
 			</Trash>
-			<div>
-				<p>현재 이동 중인 요소: {activeDraggableId.current}</p>
-				<p>
-					현재 위치: X: {position.x}, Y: {position.y}
-				</p>
-			</div>
 			<DraggingContainer>
 				<Droppable droppableId="TEST" type="GROUP-A" direction="horizontal">
 					{(droppableProvider, info) => (
@@ -208,7 +175,6 @@ const DragDropCont: FunctionComponent<IDraggableCardProps> = () => {
 							{TestArr.map((item, index) => (
 								<Draggable key={item.id} draggableId={item.id} index={index}>
 									{(provider, snapshot) => {
-										const isActive = activeDraggableId.current === item.id;
 										return (
 											<DragingArea
 												ref={(el) => {
@@ -219,9 +185,7 @@ const DragDropCont: FunctionComponent<IDraggableCardProps> = () => {
 												isDragging={snapshot.isDragging}
 												style={getStyle(provider.draggableProps.style!)}
 											>
-												<DragginTitle {...provider.dragHandleProps}>
-													{item.text} {isActive ? "a" : "b"}
-												</DragginTitle>
+												<DragginTitle {...provider.dragHandleProps}>{item.text}</DragginTitle>
 											</DragingArea>
 										);
 									}}

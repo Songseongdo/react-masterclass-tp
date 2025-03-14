@@ -19,10 +19,10 @@ interface IHistorical {
 }
 
 function Chart({ coinId }: IChartProps) {
-	const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
-		fetCoinHistory(coinId)
-	);
+	const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () => fetCoinHistory(coinId));
 	const isDark = useRecoilValue(isDarkAtom);
+
+	console.log(data?.map((price) => price.close));
 
 	return (
 		<>
@@ -34,7 +34,7 @@ function Chart({ coinId }: IChartProps) {
 					series={[
 						{
 							name: "price",
-							data: data?.map((price) => price.close),
+							data: data?.map((price) => price.close) ?? [],
 						},
 					]}
 					options={{

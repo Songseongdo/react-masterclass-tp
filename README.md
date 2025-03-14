@@ -47,4 +47,4 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## Node.JS Version
 
-16.20.2
+16.20.2 (https://nodejs.org/download/release/v16.20.2/node-v16.20.2-x64.msi)
